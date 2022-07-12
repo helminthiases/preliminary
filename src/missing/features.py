@@ -13,7 +13,7 @@ import config
 
 class Features:
     """
-    Missing percentages, and the percentage of observations measured within the WASH time interval
+    Number of missing observations
     """
 
     def __init__(self):
@@ -49,7 +49,7 @@ class Features:
     @dask.delayed
     def __coordinates(data: pd.DataFrame) -> float:
         """
-        The percentage of missing coordinate points, i.e., the percentage of cases whereby
+        The number of missing coordinate points, i.e., the number of cases whereby
         either the longitude or latitude value is missing.
 
         :param data:
@@ -57,23 +57,23 @@ class Features:
         """
 
         condition = data['longitude'].isna() | data['latitude'].isna()
-        return sum(condition) / data.shape[0]
+        return sum(condition)
 
     @dask.delayed
-    def __percentages(self, data: pd.DataFrame) -> pd.Series:
+    def __numbers(self, data: pd.DataFrame) -> pd.Series:
         """
 
         :return:
         """
 
         values: pd.Series = data.copy()[self.missing].isna().sum(axis=0)
-        return values / data.shape[0]
+        return values
 
     @staticmethod
     @dask.delayed
-    def __integrate(percentages: pd.Series, coordinates: float, country: str, observations: int):
+    def __integrate(numbers: pd.Series, coordinates: float, country: str, observations: int):
 
-        series = percentages.copy()
+        series = numbers.copy()
         series.loc['coordinates'] = coordinates
         series.loc['iso2'] = country
         series.loc['N'] = observations
@@ -90,9 +90,9 @@ class Features:
         for path in self.paths:
 
             data = self.__read(path=path)
-            percentages = self.__percentages(data=data)
+            numbers = self.__numbers(data=data)
             coordinates = self.__coordinates(data=data)
-            values = self.__integrate(percentages=percentages, coordinates=coordinates,
+            values = self.__integrate(numbers=numbers, coordinates=coordinates,
                                       country=pathlib.Path(path).stem, observations=data.shape[0])
 
             computations.append(values)
