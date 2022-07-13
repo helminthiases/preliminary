@@ -40,7 +40,4 @@ class SpatioTemporal:
                         var_name='feature', value_name='missing_number')
         frame.loc[:, 'missing_fraction'] = frame['missing_number'].div(frame['N'])
 
-        self.logger.info(frame.shape)
-        self.logger.info(frame.head())
-
         self.streams.write(data=frame, path=os.path.join(self.storage, 'spatiotemporal.csv'))
