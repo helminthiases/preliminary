@@ -4,6 +4,7 @@ import logging
 import pandas as pd
 
 import src.functions.streams
+import src.functions.directories
 
 
 class Prevalence:
@@ -15,6 +16,7 @@ class Prevalence:
         """
 
         self.storage = storage
+        src.functions.directories.Directories().create(self.storage)
 
         # instances
         self.streams = src.functions.streams.Streams()
