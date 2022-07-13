@@ -76,4 +76,4 @@ class Estimates:
                        format='pdf')
         calculations = dask.compute(computation, scheduler='processes')[0]
 
-        return calculations
+        return pd.concat(calculations)
