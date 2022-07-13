@@ -12,7 +12,6 @@ def main():
 
     source = os.path.join(str(pathlib.Path(os.getcwd()).parent), 'infections', 'warehouse',
                           'data', 'ESPEN', 'experiments', 'baseline')
-
     frame = src.missing.features.Features(storage=os.path.join(storage, 'disaggregates'), source=source).exc()
     logger.info(frame.head())
 
