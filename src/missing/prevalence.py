@@ -27,7 +27,8 @@ class Prevalence:
                             datefmt='%Y-%m-%d %H:%M:%S')
         self.logger = logging.getLogger(__name__)
 
-    def __fractions(self, data: pd.DataFrame):
+    @staticmethod
+    def __fractions(data: pd.DataFrame):
         """
 
         :param data:
@@ -37,8 +38,6 @@ class Prevalence:
         frame = data.copy()
         frame.loc[:, ['hk_prevalence', 'asc_prevalence', 'tt_prevalence']] = \
             frame[['hk_prevalence', 'asc_prevalence', 'tt_prevalence']].div(frame['N'], axis='index')
-
-        self.logger.info(frame.head())
 
         return frame
 
