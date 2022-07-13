@@ -57,6 +57,7 @@ class Features:
 
         frame = data.copy()[self.missing].isna()
         frame.loc[:, 'coordinates'] = frame['longitude'].isna() | frame['latitude'].isna()
+        frame = frame.copy().astype(dtype='int32')
 
         self.streams.write(data=frame, path=os.path.join(self.storage, f'{name}.csv'))
 
@@ -71,20 +72,6 @@ class Features:
 
         values: pd.Series = data.copy().isna().sum(axis=0)
         return values
-
-    @staticmethod
-    @dask.delayed
-    def __coordinates(data: pd.DataFrame) -> float:
-        """
-        The number of missing coordinate points, i.e., the number of cases whereby
-        either the longitude or latitude value is missing.
-
-        :param data:
-        :return:
-        """
-
-        condition = data['longitude'].isna() | data['latitude'].isna()
-        return sum(condition)
 
     @staticmethod
     @dask.delayed
@@ -108,12 +95,12 @@ class Features:
             data = self.__read(path=path)
             frame = self.__states(data=data, name=pathlib.Path(path).stem)
             numbers = self.__numbers(data=frame)
-            values = self.__integrate(numbers=numbers,
-                                      country=pathlib.Path(path).stem, observations=data.shape[0])
-
+            values = self.__integrate(numbers=numbers, country=pathlib.Path(path).stem,
+                                      observations=data.shape[0])
             computations.append(values)
 
-        dask.visualize(computations, filename=os.path.join(os.getcwd(), 'src', 'missing', 'data'),
+        dask.visualize(computations,
+                       filename=os.path.join(os.getcwd(), 'src', 'missing', 'data'),
                        format='pdf')
         calculations = dask.compute(computations, scheduler='processes')[0]
 
