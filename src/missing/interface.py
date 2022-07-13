@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+import pathlib
 
 
 def main():
@@ -9,11 +10,16 @@ def main():
     :return:
     """
 
-    frame = src.missing.features.Features().exc()
+    source = os.path.join(str(pathlib.Path(os.getcwd()).parent), 'infections', 'warehouse',
+                          'data', 'ESPEN', 'experiments', 'baseline')
+
+    frame = src.missing.features.Features(storage=os.path.join(storage, 'disaggregates'), source=source).exc()
     logger.info(frame.head())
 
-    src.missing.prevalence.Prevalence(storage=storage).exc(data=frame)
-    src.missing.spatiotemporal.SpatioTemporal(storage=storage).exc(data=frame)
+    src.missing.prevalence.Prevalence(
+        storage=os.path.join(storage, 'aggregates')).exc(data=frame)
+    src.missing.spatiotemporal.SpatioTemporal(
+        storage=os.path.join(storage, 'aggregates')).exc(data=frame)
 
 
 if __name__ == '__main__':
