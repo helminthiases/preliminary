@@ -9,8 +9,8 @@ def main():
 
     source = os.path.join(os.getcwd(), 'warehouse', 'missing', 'disaggregates')
 
-    calculations = src.missing.regression.states.States(source=source).exc()
-    logger.info(pd.concat(calculations))
+    estimates = src.missing.regression.estimates.Estimates(source=source).exc()
+    logger.info(pd.concat(estimates))
 
 
 if __name__ == '__main__':
@@ -27,6 +27,6 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
 
     # classes
-    import src.missing.regression.states
+    import src.missing.regression.estimates
 
     main()
