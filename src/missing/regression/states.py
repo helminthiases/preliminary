@@ -4,6 +4,7 @@ import pathlib
 
 import pandas as pd
 import numpy as np
+import dask
 
 import src.missing.regression.glm
 
@@ -22,6 +23,7 @@ class States:
         self.infections = ['hk_prevalence', 'asc_prevalence', 'tt_prevalence']
 
     @staticmethod
+    @dask.delayed
     def __read(path: str):
 
         try:
@@ -29,6 +31,7 @@ class States:
         except OSError as err:
             raise Exception(err.strerror) from err
 
+    @dask.delayed
     def __glm(self, independent: list, dependent: str, name: str, data: pd.DataFrame):
         """
 
@@ -38,13 +41,18 @@ class States:
         :return:
         """
 
-        if data[[dependent]].values.sum() == 0:
+        if data[dependent].sum() == 0:
+            return pd.DataFrame()
+        elif data[dependent].sum() == data.shape[0]:
+            return pd.DataFrame()
+        elif data[independent].values.sum() == 0:
             return pd.DataFrame()
         else:
             return self.glm.exc(independent=independent, dependent=dependent,
                                 name=name, data=data)
 
     @staticmethod
+    @dask.delayed
     def __integrate(time: pd.DataFrame, space: pd.DataFrame):
 
         frame = pd.concat([time, space], ignore_index=True, axis=0)
@@ -53,13 +61,19 @@ class States:
 
     def exc(self):
 
-        for path in self.paths[:5]:
+        computation = []
+        for path in self.paths:
 
             name = pathlib.Path(path).stem
-
             frame = self.__read(path=path)
             time = self.__glm(independent=['year'] + self.infections, dependent='coordinates', name=name, data=frame)
             space = self.__glm(independent=['coordinates'] + self.infections, dependent='year', name=name, data=frame)
             estimates = self.__integrate(time=time, space=space)
 
-            print(estimates)
+            computation.append(estimates)
+
+        dask.visualize(computation, filename=os.path.join(os.getcwd(), 'src', 'missing', 'regression', 'data'),
+                       format='pdf')
+        calculations = dask.compute(computation, scheduler='processes')[0]
+
+        return calculations
