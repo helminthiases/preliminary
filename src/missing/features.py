@@ -57,20 +57,20 @@ class Features:
 
         frame = data.copy()[self.missing].isna()
         frame.loc[:, 'coordinates'] = frame['longitude'].isna() | frame['latitude'].isna()
-        frame = frame.copy().astype(dtype='int32')
 
         self.streams.write(data=frame, path=os.path.join(self.storage, f'{name}.csv'))
 
         return frame
 
     @dask.delayed
-    def __numbers(self, data: pd.DataFrame) -> pd.Series:
+    def __numbers(self, data: pd.DataFrame):
         """
 
         :return:
         """
 
-        values: pd.Series = data.copy().isna().sum(axis=0)
+        values = data.copy().sum(axis=0)
+
         return values
 
     @staticmethod
