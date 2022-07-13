@@ -10,12 +10,10 @@ def main():
     """
 
     frame = src.interval.features.Features().exc()
-    logger.info(frame.head())
+    logger.info(frame.info())
 
-    try:
-        frame.to_csv(path_or_buf=os.path.join(storage, 'interval.csv'), header=True, index=False, encoding='utf-8')
-    except OSError as err:
-        raise Exception(err.strerror)
+    message = src.functions.streams.Streams().write(data=frame, path=os.path.join(storage, 'interval.csv'))
+    logger.info(message)
 
 
 if __name__ == '__main__':
@@ -34,6 +32,7 @@ if __name__ == '__main__':
     # classes
     import src.interval.features
     import src.functions.directories
+    import src.functions.streams
 
     # Storage
     storage = os.path.join(os.getcwd(), 'warehouse', 'interval')
