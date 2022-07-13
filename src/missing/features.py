@@ -1,16 +1,16 @@
 """
 Module: features
 """
+import glob
 import os
 import pathlib
-import glob
 
-import pandas as pd
 import dask
+import pandas as pd
 
 import config
-import src.functions.streams
 import src.functions.directories
+import src.functions.streams
 
 
 class Features:
@@ -21,11 +21,11 @@ class Features:
     def __init__(self, storage: str, source: str):
         """
 
+        :param storage:
+        :param source:
         """
-        
-        configurations = config.Config()
 
-        # fields for missing data analysis
+        configurations = config.Config()
         self.missing = configurations.missing()
 
         # streams
@@ -40,7 +40,7 @@ class Features:
 
     @staticmethod
     @dask.delayed
-    def __read(path: str):
+    def __read(path: str) -> pd.DataFrame:
         """
 
         :param path:
@@ -53,18 +53,38 @@ class Features:
             raise Exception(err.strerror) from err
 
     @dask.delayed
-    def __states(self, data: pd.DataFrame, name: str) -> pd.DataFrame:
+    def __states(self, data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Is a cell value missing?
 
+        :param data:
+        :return:
+        """
+
+        # Missing? Including cases whereby either the longitude or latitude value
+        # is missing.
         frame = data.copy()[self.missing].isna()
-        frame.loc[:, 'coordinates'] = frame['longitude'].isna() | frame['latitude'].isna()
-
-        self.streams.write(data=frame, path=os.path.join(self.storage, f'{name}.csv'))
+        frame.loc[:, 'coordinates'] = data['longitude'].isna() | data['latitude'].isna()
 
         return frame
 
     @dask.delayed
+    def __write(self, data: pd.DataFrame, name: str):
+        """
+
+        :param data:
+        :param name:
+        :return:
+        """
+
+        self.streams.write(data=data, path=os.path.join(self.storage, f'{name}.csv'))
+
+        return data
+
+    @dask.delayed
     def __numbers(self, data: pd.DataFrame):
         """
+        Counts the number of missing values per field.
 
         :return:
         """
@@ -75,7 +95,14 @@ class Features:
 
     @staticmethod
     @dask.delayed
-    def __integrate(numbers: pd.Series, country: str, observations: int):
+    def __integrate(numbers: pd.Series, country: str, observations: int) -> pd.Series:
+        """
+
+        :param numbers:
+        :param country:
+        :param observations:
+        :return:
+        """
 
         series = numbers.copy()
         series.loc['iso2'] = country
@@ -91,16 +118,15 @@ class Features:
 
         computations = []
         for path in self.paths:
-
+            name = pathlib.Path(path).stem
             data = self.__read(path=path)
-            frame = self.__states(data=data, name=pathlib.Path(path).stem)
-            numbers = self.__numbers(data=frame)
-            values = self.__integrate(numbers=numbers, country=pathlib.Path(path).stem,
-                                      observations=data.shape[0])
+            states = self.__states(data=data)
+            states = self.__write(data=states, name=name)
+            numbers = self.__numbers(data=states)
+            values = self.__integrate(numbers=numbers, country=name, observations=data.shape[0])
             computations.append(values)
 
-        dask.visualize(computations,
-                       filename=os.path.join(os.getcwd(), 'src', 'missing', 'data'),
+        dask.visualize(computations, filename=os.path.join(os.getcwd(), 'src', 'missing', 'data'),
                        format='pdf')
         calculations = dask.compute(computations, scheduler='processes')[0]
 
