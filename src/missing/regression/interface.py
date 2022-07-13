@@ -1,20 +1,20 @@
+import logging
 import os
 import sys
-import logging
-
-import pandas as pd
 
 
 def main():
 
+    # the location of the data files that encode data missing states
     source = os.path.join(os.getcwd(), 'warehouse', 'missing', 'disaggregates')
 
+    # null regression
     estimates = src.missing.regression.estimates.Estimates(source=source).exc()
-    logger.info(pd.concat(estimates))
+    message = src.missing.regression.preserve.Preserve().exc(estimates=estimates)
+    logger.info(message)
 
 
 if __name__ == '__main__':
-
     # path
     root = os.getcwd()
     sys.path.append(root)
@@ -28,5 +28,6 @@ if __name__ == '__main__':
 
     # classes
     import src.missing.regression.estimates
+    import src.missing.regression.preserve
 
     main()
