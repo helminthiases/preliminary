@@ -4,7 +4,7 @@ Preliminary exploratory &amp; missing data analysis
 
 <br>
 
-Notes:
+### Notes
 
 * Missing data analysis: _year_, _geographic co&ouml;rdinate_, *hookworm disease* prevalence, 
   *ascariasis* prevalence, _trichuriasis_ prevalence
@@ -16,6 +16,13 @@ Notes:
 
 * The unreliability/reliability of ``site_id``
   
+
+<br>
+<br>
+
+### Development Environment
+
+* [Anaconda](https://anaconda.org/anaconda/)
 
 <br>
 <br>
