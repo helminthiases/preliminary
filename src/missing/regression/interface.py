@@ -2,14 +2,15 @@ import os
 import sys
 import logging
 
+import pandas as pd
+
 
 def main():
 
-    logger.info('regression')
-
     source = os.path.join(os.getcwd(), 'warehouse', 'missing', 'disaggregates')
 
-    src.missing.regression.states.States(source=source).exc()
+    calculations = src.missing.regression.states.States(source=source).exc()
+    logger.info(pd.concat(calculations))
 
 
 if __name__ == '__main__':
