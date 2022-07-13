@@ -35,7 +35,7 @@ class Features:
         """
 
         try:
-            return pd.read_csv(filepath_or_buffer=path)
+            return pd.read_csv(filepath_or_buffer=path, usecols=['iso2', 'year'])
         except OSError as err:
             raise Exception(err.strerror) from err
 
