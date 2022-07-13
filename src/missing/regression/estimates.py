@@ -9,7 +9,7 @@ import dask
 import src.missing.regression.glm
 
 
-class States:
+class Estimates:
 
     def __init__(self, source):
         """
