@@ -9,6 +9,8 @@ import pandas as pd
 import dask
 
 import config
+import src.functions.streams
+import src.functions.directories
 
 
 class Features:
@@ -16,7 +18,7 @@ class Features:
     Number of missing observations
     """
 
-    def __init__(self):
+    def __init__(self, storage: str, source: str):
         """
 
         """
@@ -26,9 +28,14 @@ class Features:
         # fields for missing data analysis
         self.missing = configurations.missing()
 
-        # Data Source
-        source = os.path.join(str(pathlib.Path(os.getcwd()).parent), 'infections', 'warehouse',
-                              'data', 'ESPEN', 'experiments', 'baseline')
+        # streams
+        self.streams = src.functions.streams.Streams()
+
+        # storage
+        self.storage = storage
+        src.functions.directories.Directories().create(self.storage)
+
+        # data file paths
         self.paths = glob.glob(pathname=os.path.join(source, '*.csv'))
 
     @staticmethod
@@ -45,6 +52,26 @@ class Features:
         except OSError as err:
             raise Exception(err.strerror) from err
 
+    @dask.delayed
+    def __states(self, data: pd.DataFrame, name: str) -> pd.DataFrame:
+
+        frame = data.copy()[self.missing].isna()
+        frame.loc[:, 'coordinates'] = frame['longitude'].isna() | frame['latitude'].isna()
+
+        self.streams.write(data=frame, path=os.path.join(self.storage, f'{name}.csv'))
+
+        return frame
+
+    @dask.delayed
+    def __numbers(self, data: pd.DataFrame) -> pd.Series:
+        """
+
+        :return:
+        """
+
+        values: pd.Series = data.copy().isna().sum(axis=0)
+        return values
+
     @staticmethod
     @dask.delayed
     def __coordinates(data: pd.DataFrame) -> float:
@@ -59,22 +86,11 @@ class Features:
         condition = data['longitude'].isna() | data['latitude'].isna()
         return sum(condition)
 
-    @dask.delayed
-    def __numbers(self, data: pd.DataFrame) -> pd.Series:
-        """
-
-        :return:
-        """
-
-        values: pd.Series = data.copy()[self.missing].isna().sum(axis=0)
-        return values
-
     @staticmethod
     @dask.delayed
-    def __integrate(numbers: pd.Series, coordinates: float, country: str, observations: int):
+    def __integrate(numbers: pd.Series, country: str, observations: int):
 
         series = numbers.copy()
-        series.loc['coordinates'] = coordinates
         series.loc['iso2'] = country
         series.loc['N'] = observations
 
@@ -90,9 +106,9 @@ class Features:
         for path in self.paths:
 
             data = self.__read(path=path)
-            numbers = self.__numbers(data=data)
-            coordinates = self.__coordinates(data=data)
-            values = self.__integrate(numbers=numbers, coordinates=coordinates,
+            frame = self.__states(data=data, name=pathlib.Path(path).stem)
+            numbers = self.__numbers(data=frame)
+            values = self.__integrate(numbers=numbers,
                                       country=pathlib.Path(path).stem, observations=data.shape[0])
 
             computations.append(values)
