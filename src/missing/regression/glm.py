@@ -25,9 +25,9 @@ class GLM:
         :return:
         """
 
-        design = sma.add_constant(predictors, prepend=False)
+        design = sma.add_constant(predictors, prepend=True)
         alg = sma.GLM(endog=outcome, exog=design, family=sma.families.Binomial())
-        model = alg.fit()
+        model = alg.fit(use_t=True)
         summary = model.summary()
 
         return summary.tables
@@ -55,18 +55,23 @@ class GLM:
         return frame
 
     @staticmethod
-    def __settings(coefficients: pd.DataFrame, dependent: str, name: str) -> pd.DataFrame:
+    def __settings(data: pd.DataFrame, coefficients: pd.DataFrame,
+                   independent: list) -> pd.DataFrame:
         """
 
+        :param data:
         :param coefficients:
-        :param dependent:
-        :param name:
+        :param independent:
         :return:
         """
 
-        frame = coefficients.copy()
-        frame.loc[:, 'iso2'] = name
-        frame.loc[:, 'reference'] = dependent
+        # number of missing values per predictor
+        variables = data[independent].sum().to_frame()
+        variables.reset_index(drop=False, inplace=True)
+        variables.set_axis(labels=['variable', 'variable.nan'], axis=1, inplace=True)
+
+        # merge
+        frame = coefficients.merge(variables, how='left', on='variable')
 
         return frame
 
@@ -81,16 +86,16 @@ class GLM:
         """
 
         # the generalised linear model estimates
-        estimates = self.__estimates(outcome=data.copy()[[dependent]],
-                                     predictors=data.copy()[independent])
+        estimates = self.__estimates(outcome=data[[dependent]],
+                                     predictors=data[independent])
 
         # extracting & structuring the coefficient estimates
         coefficients = self.__coefficients(estimates=estimates)
-        coefficients = self.__settings(coefficients=coefficients,
-                                       dependent=dependent,
-                                       name=name)
+        coefficients = self.__settings(data=data, coefficients=coefficients, independent=independent)
 
-        # the number of empty reference field cells
+        # finally
+        coefficients.loc[:, 'reference'] = dependent
         coefficients.loc[:, 'reference.nan'] = data[[dependent]].values.sum()
+        coefficients.loc[:, 'iso2'] = name
 
         return coefficients
