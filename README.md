@@ -12,7 +12,6 @@ Preliminary exploratory &amp; missing data analysis
   * \% missing
   * null correlations
   * null regression
-  * dendrogram
 
 * The unreliability/reliability of ``site_id``
   
