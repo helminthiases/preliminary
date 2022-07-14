@@ -45,8 +45,6 @@ class Estimates:
             return pd.DataFrame()
         elif data[dependent].sum() == data.shape[0]:
             return pd.DataFrame()
-        elif data[independent].values.sum() == 0:
-            return pd.DataFrame()
         else:
             return self.glm.exc(independent=independent, dependent=dependent,
                                 name=name, data=data)
