@@ -14,13 +14,16 @@ class Estimates:
     def __init__(self, source):
         """
 
+        :param source:
         """
 
+        self.infections = ['hk_prevalence', 'asc_prevalence', 'tt_prevalence']
+
+        # data source paths
         self.paths = glob.glob(pathname=os.path.join(source, '*.csv'))
 
+        # instances
         self.glm = src.missing.regression.glm.GLM()
-
-        self.infections = ['hk_prevalence', 'asc_prevalence', 'tt_prevalence']
 
     @staticmethod
     @dask.delayed
@@ -41,13 +44,8 @@ class Estimates:
         :return:
         """
 
-        if data[dependent].sum() == 0:
-            return pd.DataFrame()
-        elif data[dependent].sum() == data.shape[0]:
-            return pd.DataFrame()
-        else:
-            return self.glm.exc(independent=independent, dependent=dependent,
-                                name=name, data=data)
+        return self.glm.exc(independent=independent, dependent=dependent,
+                            name=name, data=data)
 
     @staticmethod
     @dask.delayed
