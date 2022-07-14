@@ -3,8 +3,8 @@ import logging
 
 import pandas as pd
 
-import src.functions.streams
 import src.functions.directories
+import src.functions.streams
 
 
 class Prevalence:
@@ -36,8 +36,8 @@ class Prevalence:
         """
 
         frame = data.copy()
-        frame.loc[:, ['hk_prevalence', 'asc_prevalence', 'tt_prevalence']] = \
-            frame[['hk_prevalence', 'asc_prevalence', 'tt_prevalence']].div(frame['N'], axis='index')
+        quotients = frame[['hk_missing', 'asc_missing', 'tt_missing']].div(frame['N'], axis='index')
+        frame.loc[:, ['hk_missing_fraction', 'asc_missing_fraction', 'tt_missing_fraction']] = quotients.values
 
         return frame
 
@@ -49,9 +49,15 @@ class Prevalence:
         """
 
         # numbers
-        numbers = data.copy()[['iso2', 'N', 'hk_prevalence', 'asc_prevalence', 'tt_prevalence']]
-        self.streams.write(data=numbers, path=os.path.join(self.storage, 'prevalenceNumbers.csv'))
+        # numbers = data.copy()[['iso2', 'N', 'hk_prevalence', 'asc_prevalence', 'tt_prevalence']]
+        # self.streams.write(data=numbers, path=os.path.join(self.storage, 'prevalenceNumbers.csv'))
 
         # percentages
-        fractions = self.__fractions(data=numbers)
-        self.streams.write(data=fractions, path=os.path.join(self.storage, 'prevalenceFractions.csv'))
+        # fractions = self.__fractions(data=numbers)
+        # self.streams.write(data=fractions, path=os.path.join(self.storage, 'prevalenceFractions.csv'))
+
+        frame = data.copy()[['iso2', 'N', 'hk_prevalence', 'asc_prevalence', 'tt_prevalence']]
+        frame.rename(columns={'hk_prevalence': 'hk_missing', 'asc_prevalence': 'asc_missing',
+                              'tt_prevalence': 'tt_missing'}, inplace=True)
+        frame = self.__fractions(data=frame)
+        self.streams.write(data=frame, path=os.path.join(self.storage, 'prevalence.csv'))
