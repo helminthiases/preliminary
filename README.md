@@ -13,9 +13,6 @@ Preliminary exploratory &amp; missing data analysis
   * null correlations
   * null regression
 
-* The unreliability/reliability of ``site_id``
-  
-
 <br>
 <br>
 
