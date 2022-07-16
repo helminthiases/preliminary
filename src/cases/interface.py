@@ -24,6 +24,9 @@ def main():
     # merge
     frame = raw.merge(complete, how='left', on='iso2')
     frame.loc[:, 'complete_fraction'] = frame['complete'].div(frame['N'], fill_value=0).values
+
+    # NaN
+    frame['complete'].where(frame['complete'].notna(), 0, inplace=True)
     logger.info(frame)
 
     # preserve
