@@ -1,6 +1,7 @@
 """
 Module: glm
 """
+import numpy as np
 import pandas as pd
 import statsmodels.api as sma
 import statsmodels.iolib as smi
@@ -75,6 +76,13 @@ class GLM:
 
         return frame
 
+    def __extrema(self, independent: list):
+
+        extrema = pd.DataFrame(data={'variable': ['const'] + independent})
+        extrema.loc[:, self.floats] = np.NAN
+
+        return extrema
+
     def exc(self, independent: list, dependent: str, name: str, data: pd.DataFrame) -> pd.DataFrame:
         """
 
@@ -85,12 +93,16 @@ class GLM:
         :return:
         """
 
-        # the generalised linear model estimates
-        estimates = self.__estimates(outcome=data[[dependent]],
-                                     predictors=data[independent])
+        if (data[dependent].sum() == 0) | (data[dependent].sum() == data.shape[0]):
+            coefficients = self.__extrema(independent=independent)
+        else:
+            # the generalised linear model estimates
+            estimates = self.__estimates(outcome=data[[dependent]],
+                                         predictors=data[independent])
+            # extracting & structuring the coefficient estimates
+            coefficients = self.__coefficients(estimates=estimates)
 
-        # extracting & structuring the coefficient estimates
-        coefficients = self.__coefficients(estimates=estimates)
+        print(coefficients)
         coefficients = self.__settings(data=data, coefficients=coefficients, independent=independent)
 
         # finally

@@ -35,6 +35,7 @@ utils::write.table(x = correlations,
                    file = storage,
                    append = FALSE,
                    sep = ',',
+                   na = '',
                    row.names = FALSE,
                    col.names = TRUE,
                    fileEncoding = 'UTF-8')
