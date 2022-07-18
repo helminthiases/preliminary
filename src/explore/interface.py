@@ -9,7 +9,7 @@ def main():
 
 
 if __name__ == '__main__':
-    
+
     # path
     root = os.getcwd()
     sys.path.append(root)
