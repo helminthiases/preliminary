@@ -1,10 +1,7 @@
-import sys
 import os
-import logging
-import pathlib
 
-import pandas as pd
 import dask.dataframe
+import pandas as pd
 
 import src.functions.streams
 
@@ -47,6 +44,11 @@ class Density:
             data=data, path=os.path.join(self.storage, 'density.csv'))
 
     def exc(self, path):
+        """
+
+        :param path:
+        :return:
+        """
 
         frame = self.__read(path=path)
 
