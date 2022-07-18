@@ -5,7 +5,21 @@ import sys
 
 
 def main():
+    """
+
+    :return:
+    """
+
     logger.info('explore')
+
+    message = src.explore.water.Water(storage=storage).exc(path=path)
+    logger.info(message)
+
+    message = src.explore.sewer.Sewer(storage=storage).exc(path=path)
+    logger.info(message)
+
+    message = src.explore.density.Density(storage=storage).exc(path=path)
+    logger.info(message)
 
 
 if __name__ == '__main__':
@@ -31,6 +45,9 @@ if __name__ == '__main__':
     storage = os.path.join(root, 'warehouse', 'explore')
 
     # classes
+    import src.explore.sewer
+    import src.explore.water
+    import src.explore.density
     import src.functions.directories
     import src.functions.streams
 
