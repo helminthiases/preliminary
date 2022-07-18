@@ -36,7 +36,7 @@ class Water:
         """
 
         return src.functions.streams.Streams().write(
-            data=data, path=os.path.join(self.storage, 'sewer.csv'))
+            data=data, path=os.path.join(self.storage, 'water.csv'))
 
     def exc(self, path):
         """
