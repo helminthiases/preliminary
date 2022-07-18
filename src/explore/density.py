@@ -20,7 +20,7 @@ def main():
     frame = dask.dataframe.read_csv(urlpath=path, usecols=fields, encoding='utf-8')
     lines: pd.DataFrame = frame.compute()
     lines.reset_index(drop=True, inplace=True)
-    lines = lines.melt(id_vars=['iso2', 'longitude', 'latitude', 'year', 'identifier', 'p_density'],
+    lines = lines.melt(id_vars=['iso2', 'year', 'identifier', 'p_density'],
                        value_vars=['hk_prevalence', 'asc_prevalence', 'tt_prevalence'],
                        var_name='infection',
                        value_name='prevalence')
@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     # source
     path = os.path.join(hub, 'spatial', 'warehouse', 'features', 'elevation', '*.csv')
-    fields = ['iso2', 'longitude', 'latitude', 'year', 'hk_prevalence', 'asc_prevalence', 'tt_prevalence', 'identifier',
+    fields = ['iso2', 'year', 'hk_prevalence', 'asc_prevalence', 'tt_prevalence', 'identifier',
               'p_density']
 
     # storage
