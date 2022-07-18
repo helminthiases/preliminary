@@ -18,6 +18,12 @@ def main():
     message = src.explore.sewer.Sewer(storage=storage).exc(path=path)
     logger.info(message)
 
+    message = src.explore.elevation.Elevation(storage=storage).exc(path=path)
+    logger.info(message)
+
+    message = src.explore.distributions.Distributions(storage=storage).exc(path=path)
+    logger.info(message)
+
     message = src.explore.density.Density(storage=storage).exc(path=path)
     logger.info(message)
 
@@ -45,8 +51,10 @@ if __name__ == '__main__':
     storage = os.path.join(root, 'warehouse', 'explore')
 
     # classes
-    import src.explore.sewer
     import src.explore.water
+    import src.explore.sewer
+    import src.explore.elevation
+    import src.explore.distributions
     import src.explore.density
     import src.functions.directories
     import src.functions.streams
