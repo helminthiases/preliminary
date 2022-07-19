@@ -5,33 +5,24 @@ import sys
 
 
 def main():
+    """
+
+    :return:
+    """
+
     logger.info('cases')
 
-    # number of lines
-    numerics = src.cases.numerics.Numerics()
-
-    # raw
+    # experiments
     paths = glob.glob(pathname=os.path.join(hub, 'infections', 'warehouse', 'data',
                                             'ESPEN', 'experiments', 'baseline', '*.csv'))
-    raw = numerics.exc(paths=paths)
+    experiments = src.cases.experiments.Experiments().exc(paths=paths)
 
-    # complete
-    paths = glob.glob(pathname=os.path.join(hub, 'infections', 'warehouse', 'data',
-                                            'ESPEN', 'networks', 'graphs', '*.csv'))
-    complete = numerics.exc(paths=paths)
-    complete.rename(columns={'N': 'complete'}, inplace=True)
+    # exists
+    path = os.path.join(hub, 'infections', 'warehouse', 'data', 'ESPEN', 'networks', 'graphs', '*.csv')
+    exists = src.cases.exists.Exists().exc(path=path)
 
-    # merge
-    frame = raw.merge(complete, how='left', on='iso2')
-    frame.loc[:, 'complete_fraction'] = frame['complete'].div(frame['N'], fill_value=0).values
-
-    # NaN
-    frame['complete'].where(frame['complete'].notna(), 0, inplace=True)
-    logger.info(frame)
-
-    # preserve
-    message = src.functions.streams.Streams().write(
-        data=frame, path=os.path.join(storage, 'complete.csv'))
+    # integrate
+    message = src.cases.integrate.Integrate(storage=storage).exc(experiments=experiments, exists=exists)
     logger.info(message)
 
 
@@ -51,7 +42,9 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
 
     # classes
-    import src.cases.numerics
+    import src.cases.experiments
+    import src.cases.exists
+    import src.cases.integrate
     import src.functions.streams
     import src.functions.directories
 

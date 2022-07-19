@@ -22,7 +22,7 @@ class Features:
 
         # Data Source
         source = os.path.join(str(pathlib.Path(os.getcwd()).parent), 'infections', 'warehouse',
-                              'data', 'ESPEN', 'experiments', 'baseline')
+                              'data', 'ESPEN', 'networks', 'graphs')
         self.paths = glob.glob(pathname=os.path.join(source, '*.csv'))
 
     @staticmethod
@@ -55,9 +55,9 @@ class Features:
     @dask.delayed
     def __integrate(interval: float, country: str, observations: int):
 
-        series = pd.Series(data={'interval': interval})
+        series = pd.Series(data={'complete_in_interval': interval})
         series.loc['iso2'] = country
-        series.loc['N'] = observations
+        series.loc['complete'] = observations
 
         return series
 
