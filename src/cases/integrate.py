@@ -39,16 +39,16 @@ class Integrate:
 
         return frame
 
-    def exc(self, raw: pd.DataFrame, exists: pd.DataFrame):
+    def exc(self, experiments: pd.DataFrame, exists: pd.DataFrame):
         """
 
-        :param raw:
+        :param experiments:
         :param exists:
         :return:
         """
 
         # merge
-        frame = raw.merge(exists, how='left', on='iso2')
+        frame = experiments.merge(exists, how='left', on='iso2')
 
         # fractions
         frame = self.__fractions(data=frame)
