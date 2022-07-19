@@ -29,7 +29,7 @@ class Integrate:
         # melt
         frame = data.melt(id_vars=['iso2', 'N'],
                           value_vars=['hk_prevalence', 'asc_prevalence', 'tt_prevalence', 'sth_prevalence'],
-                          value_name='infection', var_name='exist')
+                          value_name='exist', var_name='infection')
 
         # fractions
         frame.loc[:, 'exist_fraction'] = frame['exist'].div(frame['N'], fill_value=0).values
