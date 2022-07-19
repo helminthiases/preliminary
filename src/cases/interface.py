@@ -5,6 +5,11 @@ import sys
 
 
 def main():
+    """
+
+    :return:
+    """
+
     logger.info('cases')
 
     # experiments
@@ -16,6 +21,7 @@ def main():
     path = os.path.join(hub, 'infections', 'warehouse', 'data', 'ESPEN', 'networks', 'graphs', '*.csv')
     exists = src.cases.exists.Exists().exc(path=path)
 
+    # integrate
     message = src.cases.integrate.Integrate(storage=storage).exc(experiments=experiments, exists=exists)
     logger.info(message)
 
