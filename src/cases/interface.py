@@ -17,7 +17,7 @@ def main():
     path = os.path.join(hub, 'infections', 'warehouse', 'data', 'ESPEN', 'networks', 'graphs', '*.csv')
     exists = src.cases.exists.Exists().exc(path=path)
 
-
+    message = src.cases.integrate.Integrate(storage=storage).exc(raw=raw, exists=exists)
     logger.info(message)
 
 
@@ -39,6 +39,7 @@ if __name__ == '__main__':
     # classes
     import src.cases.numerics
     import src.cases.exists
+    import src.cases.integrate
     import src.functions.streams
     import src.functions.directories
 
