@@ -59,6 +59,9 @@ class Elevation:
                            var_name='infection',
                            value_name='prevalence')
 
+        condition = lines[['prevalence']].notna().values
+        lines = lines.copy().loc[condition, :]
+
         message = self.__write(data=lines)
 
         return message
