@@ -7,17 +7,16 @@ import sys
 def main():
     logger.info('cases')
 
-    # the raw number of records
-    numerics = src.cases.numerics.Numerics()
+    # experiments
     paths = glob.glob(pathname=os.path.join(hub, 'infections', 'warehouse', 'data',
                                             'ESPEN', 'experiments', 'baseline', '*.csv'))
-    raw = numerics.exc(paths=paths)
+    experiments = src.cases.experiments.Experiments().exc(paths=paths)
 
     # exists
     path = os.path.join(hub, 'infections', 'warehouse', 'data', 'ESPEN', 'networks', 'graphs', '*.csv')
     exists = src.cases.exists.Exists().exc(path=path)
 
-    message = src.cases.integrate.Integrate(storage=storage).exc(raw=raw, exists=exists)
+    message = src.cases.integrate.Integrate(storage=storage).exc(experiments=experiments, exists=exists)
     logger.info(message)
 
 
@@ -37,7 +36,7 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
 
     # classes
-    import src.cases.numerics
+    import src.cases.experiments
     import src.cases.exists
     import src.cases.integrate
     import src.functions.streams
