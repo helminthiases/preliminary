@@ -5,7 +5,7 @@ import dask
 import pandas as pd
 
 
-class Numerics:
+class Experiments:
 
     def __init__(self):
         """
