@@ -8,6 +8,9 @@ import statsmodels.iolib as smi
 
 
 class GLM:
+    """
+    GLM
+    """
 
     def __init__(self):
         """
@@ -77,6 +80,11 @@ class GLM:
         return frame
 
     def __extrema(self, independent: list):
+        """
+
+        :param independent:
+        :return:
+        """
 
         extrema = pd.DataFrame(data={'variable': ['const'] + independent})
         extrema.loc[:, self.floats] = np.NAN
