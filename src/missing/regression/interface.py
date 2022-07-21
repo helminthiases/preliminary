@@ -1,15 +1,19 @@
 import logging
 import os
 import sys
+import pathlib
 
 
 def main():
 
-    # the location of the data files that encode data missing states
-    source = os.path.join(os.getcwd(), 'warehouse', 'missing', 'disaggregates')
+    logger.info('pattern')
 
-    # null regression
-    estimates = src.missing.regression.estimates.Estimates(source=source).exc()
+    source = os.path.join(str(pathlib.Path(os.getcwd()).parent), 'infections', 'warehouse',
+                          'data', 'ESPEN', 'experiments', 'baseline')
+
+    paths = [os.path.join(source, f'{name}.csv') for name in ['NG', 'TG', 'LR', 'CD', 'UG', 'KE', 'CI', 'ZM', 'MW']]
+
+    estimates = src.missing.regression.estimates.Estimates(paths=paths).exc()
     message = src.missing.regression.preserve.Preserve().exc(estimates=estimates)
     logger.info(message)
 
@@ -26,7 +30,7 @@ if __name__ == '__main__':
                         datefmt='%Y-%m-%d %H:%M:%S')
     logger = logging.getLogger(__name__)
 
-    # classes
+    # class
     import src.missing.regression.estimates
     import src.missing.regression.preserve
 
