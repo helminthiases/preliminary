@@ -1,38 +1,53 @@
+"""
+estimates
+"""
 import os
-import glob
 import pathlib
 
 import pandas as pd
-import numpy as np
 import dask
 
 import src.missing.regression.glm
 
 
 class Estimates:
+    """
+    The null regression estimates
+    """
 
-    def __init__(self, source):
+    def __init__(self, paths):
         """
 
-        :param source:
+        :param paths:
         """
 
         self.infections = ['hk_prevalence', 'asc_prevalence', 'tt_prevalence']
 
         # data source paths
-        self.paths = glob.glob(pathname=os.path.join(source, '*.csv'))
+        self.paths = paths
 
         # instances
         self.glm = src.missing.regression.glm.GLM()
 
-    @staticmethod
     @dask.delayed
-    def __read(path: str):
+    def __read(self, path: str):
+        """
+
+        :param path:
+        :return:
+        """
 
         try:
-            return pd.read_csv(filepath_or_buffer=path, header=0, encoding='utf-8', dtype=np.int32)
+            reference = pd.read_csv(filepath_or_buffer=path, header=0, encoding='utf-8',
+                                    usecols=['iso2', 'year', 'longitude', 'latitude'] + self.infections)
         except OSError as err:
             raise Exception(err.strerror) from err
+
+        reference.loc[:, 'coordinates'] = reference['longitude'].notna() & reference['latitude'].notna()
+        reference.loc[:, 'period'] = reference['year'].isna()
+        reference.loc[:, 'geography'] = reference['longitude'].isna() | reference['latitude'].isna()
+
+        return reference
 
     @dask.delayed
     def __glm(self, independent: list, dependent: str, name: str, data: pd.DataFrame):
@@ -50,20 +65,30 @@ class Estimates:
     @staticmethod
     @dask.delayed
     def __integrate(time: pd.DataFrame, space: pd.DataFrame):
+        """
+
+        :param time:
+        :param space:
+        :return:
+        """
 
         frame = pd.concat([time, space], ignore_index=True, axis=0)
 
         return frame
 
     def exc(self):
+        """
+
+        :return:
+        """
 
         computation = []
         for path in self.paths:
 
             name = pathlib.Path(path).stem
             frame = self.__read(path=path)
-            time = self.__glm(independent=['year'] + self.infections, dependent='coordinates', name=name, data=frame)
-            space = self.__glm(independent=['coordinates'] + self.infections, dependent='year', name=name, data=frame)
+            time = self.__glm(independent=['year'] + self.infections, dependent='geography', name=name, data=frame)
+            space = self.__glm(independent=['coordinates'] + self.infections, dependent='period', name=name, data=frame)
             estimates = self.__integrate(time=time, space=space)
 
             computation.append(estimates)

@@ -8,6 +8,9 @@ import statsmodels.iolib as smi
 
 
 class GLM:
+    """
+    GLM
+    """
 
     def __init__(self):
         """
@@ -27,7 +30,7 @@ class GLM:
         """
 
         design = sma.add_constant(predictors, prepend=True)
-        alg = sma.GLM(endog=outcome, exog=design, family=sma.families.Binomial())
+        alg = sma.GLM(endog=outcome, exog=design.astype(float), missing='drop', family=sma.families.Binomial())
         model = alg.fit(use_t=True)
         summary = model.summary()
 
@@ -67,7 +70,7 @@ class GLM:
         """
 
         # number of missing values per predictor
-        variables = data[independent].sum().to_frame()
+        variables = data[independent].isna().sum().to_frame()
         variables.reset_index(drop=False, inplace=True)
         variables.set_axis(labels=['variable', 'variable.nan'], axis=1, inplace=True)
 
@@ -77,6 +80,11 @@ class GLM:
         return frame
 
     def __extrema(self, independent: list):
+        """
+
+        :param independent:
+        :return:
+        """
 
         extrema = pd.DataFrame(data={'variable': ['const'] + independent})
         extrema.loc[:, self.floats] = np.NAN
@@ -93,7 +101,12 @@ class GLM:
         :return:
         """
 
+        condition = data[independent].notna().sum() > 0
+        reduced = sum(condition) != len(independent)
+
         if (data[dependent].sum() == 0) | (data[dependent].sum() == data.shape[0]):
+            coefficients = self.__extrema(independent=independent)
+        elif reduced:
             coefficients = self.__extrema(independent=independent)
         else:
             # the generalised linear model estimates
@@ -102,7 +115,7 @@ class GLM:
             # extracting & structuring the coefficient estimates
             coefficients = self.__coefficients(estimates=estimates)
 
-        print(coefficients)
+        # the missing values counts
         coefficients = self.__settings(data=data, coefficients=coefficients, independent=independent)
 
         # finally

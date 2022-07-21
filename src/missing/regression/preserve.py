@@ -1,3 +1,6 @@
+"""
+preserve
+"""
 import os
 
 import pandas as pd
@@ -7,6 +10,9 @@ import src.functions.streams
 
 
 class Preserve:
+    """
+    Preserve
+    """
 
     def __init__(self):
         """
@@ -26,6 +32,7 @@ class Preserve:
         """
 
         frame = estimates.loc[~(estimates['variable'] == 'const'), :]
+        frame = frame.copy().replace({'reference': {'geography': 'coordinates', 'period': 'year'}})
         message = src.functions.streams.Streams().write(
             data=frame, path=os.path.join(self.storage, 'estimates.csv'))
 
