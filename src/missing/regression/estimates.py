@@ -1,3 +1,6 @@
+"""
+estimates
+"""
 import os
 import pathlib
 
@@ -8,6 +11,9 @@ import src.missing.regression.glm
 
 
 class Estimates:
+    """
+    The null regression estimates
+    """
 
     def __init__(self, paths):
         """
@@ -25,6 +31,11 @@ class Estimates:
 
     @dask.delayed
     def __read(self, path: str):
+        """
+
+        :param path:
+        :return:
+        """
 
         try:
             reference = pd.read_csv(filepath_or_buffer=path, header=0, encoding='utf-8',
@@ -54,12 +65,22 @@ class Estimates:
     @staticmethod
     @dask.delayed
     def __integrate(time: pd.DataFrame, space: pd.DataFrame):
+        """
+
+        :param time:
+        :param space:
+        :return:
+        """
 
         frame = pd.concat([time, space], ignore_index=True, axis=0)
 
         return frame
 
     def exc(self):
+        """
+
+        :return:
+        """
 
         computation = []
         for path in self.paths:
