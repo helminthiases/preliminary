@@ -1,3 +1,6 @@
+"""
+preserve
+"""
 import os
 
 import pandas as pd
@@ -7,6 +10,9 @@ import src.functions.streams
 
 
 class Preserve:
+    """
+    Preserve
+    """
 
     def __init__(self):
         """
