@@ -7,7 +7,7 @@ Jupyter Notebooks
 
 * association.ipynb<br>[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/helminthiases/preliminary/blob/develop/notebooks/association.ipynb)
 
-* onchocerciasis.ipynb<br>[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/helminthiases/preliminary/blob/develop/notebooks/onchocerciasis.ipynb)
+* onchocerciasis.ipynb<br>[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/helminthiases/preliminary/blob/develop/notebooks/onchocerciasis.ipynb){:target="_blank"}
 
 
 <br>
