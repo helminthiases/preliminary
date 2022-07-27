@@ -10,6 +10,7 @@ class Integrate:
     def __init__(self, storage: str):
         """
 
+        :param storage:
         """
 
         self.storage = storage
@@ -53,4 +54,6 @@ class Integrate:
         # fractions
         frame = self.__fractions(data=frame)
 
-        return self.__write(data=frame)
+        self.__write(data=frame)
+
+        return frame
