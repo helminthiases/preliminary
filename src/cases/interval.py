@@ -72,7 +72,7 @@ class Interval:
     def exc(self, integration, storage):
         """
 
-        :param integration: The data frame of raw counts & !NaN per infection type, and per country
+        :param integration: The data frame of raw & !NaN counts → per infection type, and per country.
         :param storage: Storage directory for the combination of WASH interval counts & <integration>
         :return:
         """
