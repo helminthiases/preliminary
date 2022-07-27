@@ -19,7 +19,7 @@ def main():
     # for reference purposes, get the original number of observations per
     # country, i.e., the counts prior to the removal of incomplete cases
     try:
-        complete = pd.read_csv(filepath_or_buffer=os.path.join(root, 'warehouse', 'cases', 'complete.csv'),
+        complete = pd.read_csv(filepath_or_buffer=os.path.join(root, 'warehouse', 'cases', 'cases.csv'),
                                usecols=['iso2', 'N'])
     except OSError as err:
         raise Exception(err.strerror) from err
