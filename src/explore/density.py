@@ -29,9 +29,14 @@ class Density:
         """
 
         try:
-            return dask.dataframe.read_csv(urlpath=path, usecols=self.fields, encoding='utf-8')
+            frame = dask.dataframe.read_csv(urlpath=path, usecols=self.fields, encoding='utf-8')
         except OSError as err:
             raise Exception(err.strerror) from err
+
+        lines: pd.DataFrame = frame.compute()
+        lines.reset_index(drop=True, inplace=True)
+
+        return lines
 
     def __write(self, data):
         """
@@ -43,6 +48,37 @@ class Density:
         return src.functions.streams.Streams().write(
             data=data, path=os.path.join(self.storage, 'density.csv'))
 
+    @staticmethod
+    def __density(data):
+        """
+
+        :param data:
+        :return:
+        """
+
+        condition = data[['p_density']].notna().values
+        lines = data.copy().loc[condition, :]
+
+        return lines
+
+    @staticmethod
+    def __prevalence(data):
+        """
+
+        :param data:
+        :return:
+        """
+
+        lines = data.melt(id_vars=['iso2', 'year', 'identifier', 'p_density'],
+                          value_vars=['hk_prevalence', 'asc_prevalence', 'tt_prevalence'],
+                          var_name='infection',
+                          value_name='prevalence')
+
+        condition = lines[['prevalence']].notna().values
+        lines = lines.copy().loc[condition, :]
+
+        return lines
+
     def exc(self, path):
         """
 
@@ -50,14 +86,9 @@ class Density:
         :return:
         """
 
-        frame = self.__read(path=path)
-
-        lines: pd.DataFrame = frame.compute()
-        lines.reset_index(drop=True, inplace=True)
-        lines = lines.melt(id_vars=['iso2', 'year', 'identifier', 'p_density'],
-                           value_vars=['hk_prevalence', 'asc_prevalence', 'tt_prevalence'],
-                           var_name='infection',
-                           value_name='prevalence')
+        lines = self.__read(path=path)
+        lines = self.__density(data=lines)
+        lines = self.__prevalence(data=lines)
 
         message = self.__write(data=lines)
 
