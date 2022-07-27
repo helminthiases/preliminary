@@ -21,12 +21,17 @@ def main():
     path = os.path.join(hub, 'infections', 'warehouse', 'data', 'ESPEN', 'networks', 'graphs', '*.csv')
     exists = src.cases.exists.Exists().exc(path=path)
 
-    # integrate
-    message = src.cases.integrate.Integrate(storage=storage).exc(experiments=experiments, exists=exists)
+    # integrating raw counts & !NaN counts
+    integration = src.cases.integrate.Integrate(storage=storage).exc(experiments=experiments, exists=exists)
+    logger.info(integration.info())
+
+    # interval
+    message = src.cases.interval.Interval().exc(integration=integration[['iso2', 'N']], storage=storage)
     logger.info(message)
 
 
 if __name__ == '__main__':
+
     # path
     root = os.getcwd()
     sys.path.append(root)
@@ -45,6 +50,7 @@ if __name__ == '__main__':
     import src.cases.experiments
     import src.cases.exists
     import src.cases.integrate
+    import src.cases.interval
     import src.functions.streams
     import src.functions.directories
 
