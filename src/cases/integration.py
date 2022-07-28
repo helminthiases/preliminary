@@ -5,7 +5,7 @@ import pandas as pd
 import src.functions.streams
 
 
-class Integrate:
+class Integration:
 
     def __init__(self, storage: str):
         """
