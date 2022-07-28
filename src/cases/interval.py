@@ -21,11 +21,6 @@ class Interval:
         # WASH data time interval
         self.interval = configurations.interval()
 
-        # Data Source
-        source = os.path.join(str(pathlib.Path(os.getcwd()).parent), 'infections', 'warehouse',
-                              'data', 'ESPEN', 'networks', 'graphs')
-        self.paths = glob.glob(pathname=os.path.join(source, '*.csv'))
-
     @staticmethod
     @dask.delayed
     def __read(path: str):
@@ -41,20 +36,22 @@ class Interval:
             raise Exception(err.strerror) from err
 
     @dask.delayed
-    def __interval(self, data: pd.DataFrame) -> float:
+    def __interval(self, data: pd.DataFrame) -> dict:
         """
-        The percentage of observations that were measured within the WASH time interval.
+        The number & fraction of observations that were measured within the WASH time interval.
 
         :param data:
         :return:
         """
 
         condition = data['year'].isin(self.interval)
-        return sum(condition) / data.shape[0]
+        interval = {'complete_iin': sum(condition),
+                    'complete_iif': sum(condition) / data.shape[0]}
+        return interval
 
     @staticmethod
     @dask.delayed
-    def __integrate(interval: float, country: str, observations: int):
+    def __integrate(interval: dict, country: str, observations: int):
         """
 
         :param interval:
@@ -63,28 +60,31 @@ class Interval:
         :return:
         """
 
-        series = pd.Series(data={'complete_in_interval': interval})
+        series = pd.Series(data=interval)
         series.loc['iso2'] = country
         series.loc['complete'] = observations
 
         return series
 
-    def exc(self, integration, storage):
+    def exc(self, integration: pd.DataFrame, source, storage):
         """
 
-        :param integration: The data frame of raw & !NaN counts → per infection type, and per country.
+        :param integration: Counts of raw & usable observations → per infection type, and per country.
+        :param source: The location of the data files
         :param storage: Storage directory for the combination of WASH interval counts & <integration>
         :return:
         """
 
+        # Paths
+        paths = glob.glob(pathname=source)
+
         computations = []
-        for path in self.paths:
+        for path in paths:
             data = self.__read(path=path)
             interval = self.__interval(data=data)
             values = self.__integrate(interval=interval, country=pathlib.Path(path).stem, observations=data.shape[0])
             computations.append(values)
 
-        dask.visualize(computations, filename=os.path.join(os.getcwd(), 'src', 'interval', 'data'), format='pdf')
         calculations = dask.compute(computations, scheduler='processes')[0]
 
         interval = pd.concat(objs=calculations, axis=1).transpose()
