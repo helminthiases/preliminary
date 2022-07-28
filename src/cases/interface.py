@@ -24,9 +24,9 @@ def main():
     logger.info(exists.head())
 
     # integrating experiments & exists
-    integration = src.cases.integrate.Integrate(storage=storage).exc(
+    message = src.cases.integration.Integration(storage=storage).exc(
         experiments=experiments, exists=exists)
-    logger.info(integration.info())
+    logger.info(message)
 
 
 if __name__ == '__main__':
@@ -48,8 +48,7 @@ if __name__ == '__main__':
     # classes
     import src.cases.experiments
     import src.cases.exists
-    import src.cases.integrate
-    import src.cases.interval
+    import src.cases.integration
     import src.functions.streams
     import src.functions.directories
 
