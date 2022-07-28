@@ -12,21 +12,25 @@ def main():
 
     logger.info('cases')
 
-    # experiments
+    # experiments: # of raw observations per country
     paths = glob.glob(pathname=os.path.join(hub, 'infections', 'warehouse', 'data',
                                             'ESPEN', 'experiments', 'baseline', '*.csv'))
     experiments = src.cases.experiments.Experiments().exc(paths=paths)
+    logger.info(experiments.head())
 
-    # exists
-    path = os.path.join(hub, 'infections', 'warehouse', 'data', 'ESPEN', 'networks', 'graphs', '*.csv')
-    exists = src.cases.exists.Exists().exc(path=path)
+    # exists: summary of number of usable observations per infection type, per country
+    source = os.path.join(hub, 'infections', 'warehouse', 'data', 'ESPEN', 'experiments', 'reduced', '*.csv')
+    exists = src.cases.exists.Exists().exc(source=source)
+    logger.info(exists.head())
 
-    # integrate
-    message = src.cases.integrate.Integrate(storage=storage).exc(experiments=experiments, exists=exists)
+    # integrating experiments & exists
+    message = src.cases.integration.Integration(storage=storage).exc(
+        experiments=experiments, exists=exists)
     logger.info(message)
 
 
 if __name__ == '__main__':
+
     # path
     root = os.getcwd()
     sys.path.append(root)
@@ -44,7 +48,7 @@ if __name__ == '__main__':
     # classes
     import src.cases.experiments
     import src.cases.exists
-    import src.cases.integrate
+    import src.cases.integration
     import src.functions.streams
     import src.functions.directories
 

@@ -1,4 +1,6 @@
-import os
+"""
+Module: experiments
+"""
 import pathlib
 
 import dask
@@ -6,6 +8,9 @@ import pandas as pd
 
 
 class Experiments:
+    """
+    Experiments
+    """
 
     def __init__(self):
         """
@@ -37,7 +42,6 @@ class Experiments:
             lines = self.__lines(path=path)
             computation.append(lines)
 
-        dask.visualize(computation, filename=os.path.join(os.getcwd(), 'src', 'cases', 'data'), format='pdf')
         calculations = dask.compute(computation, scheduler='processes')[0]
 
         return pd.concat(calculations, ignore_index=True)
