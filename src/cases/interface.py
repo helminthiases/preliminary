@@ -12,22 +12,21 @@ def main():
 
     logger.info('cases')
 
-    # experiments
+    # experiments: # of raw observations per country
     paths = glob.glob(pathname=os.path.join(hub, 'infections', 'warehouse', 'data',
                                             'ESPEN', 'experiments', 'baseline', '*.csv'))
     experiments = src.cases.experiments.Experiments().exc(paths=paths)
+    logger.info(experiments.head())
 
-    # exists
-    path = os.path.join(hub, 'infections', 'warehouse', 'data', 'ESPEN', 'networks', 'graphs', '*.csv')
-    exists = src.cases.exists.Exists().exc(path=path)
+    # exists: summary of number of usable observations per infection type, per country
+    source = os.path.join(hub, 'infections', 'warehouse', 'data', 'ESPEN', 'experiments', 'reduced', '*.csv')
+    exists = src.cases.exists.Exists().exc(source=source)
+    logger.info(exists.head())
 
-    # integrating raw counts & !NaN counts
-    integration = src.cases.integrate.Integrate(storage=storage).exc(experiments=experiments, exists=exists)
+    # integrating experiments & exists
+    integration = src.cases.integrate.Integrate(storage=storage).exc(
+        experiments=experiments, exists=exists)
     logger.info(integration.info())
-
-    # interval
-    message = src.cases.interval.Interval().exc(integration=integration[['iso2', 'N']], storage=storage)
-    logger.info(message)
 
 
 if __name__ == '__main__':
