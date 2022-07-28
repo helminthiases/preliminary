@@ -40,7 +40,7 @@ class Integration:
 
         return frame
 
-    def exc(self, experiments: pd.DataFrame, exists: pd.DataFrame):
+    def exc(self, experiments: pd.DataFrame, exists: pd.DataFrame) -> str:
         """
 
         :param experiments:
@@ -54,6 +54,4 @@ class Integration:
         # fractions
         frame = self.__fractions(data=frame)
 
-        self.__write(data=frame)
-
-        return frame
+        return self.__write(data=frame)
