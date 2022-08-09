@@ -21,7 +21,8 @@ def main():
                           'data', 'ESPEN', 'experiments', 'baseline')
 
     # focusing on the countries with the smallest number of missing data cells
-    paths = [os.path.join(source, f'{name}.csv') for name in ['NG', 'TG', 'LR', 'CD', 'UG', 'KE', 'CI', 'ZM', 'MW']]
+    paths = [os.path.join(source, f'{name}.csv')
+             for name in ['NG', 'TG', 'LR', 'CD', 'UG', 'KE', 'CI', 'ZM', 'MW', 'TZ', 'MG', 'SZ', 'ML', 'ER']]
 
     # null regression
     estimates = src.missing.regression.estimates.Estimates(paths=paths).exc()

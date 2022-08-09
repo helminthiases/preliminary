@@ -28,7 +28,7 @@ def main():
 
     # Focusing on the countries with the smallest number of missing data cells
     paths = [os.path.join(source, f'{name}.csv')
-             for name in ['NG', 'TG', 'LR', 'CD', 'UG', 'KE', 'CI', 'ZM', 'MW']]
+             for name in ['NG', 'TG', 'LR', 'CD', 'UG', 'KE', 'CI', 'ZM', 'MW', 'TZ', 'MG', 'SZ', 'ML', 'ER']]
 
     # Hence, null regression.
     estimates = src.missing.regression.estimates.Estimates(paths=paths).exc()
