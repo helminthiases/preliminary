@@ -45,7 +45,7 @@ if __name__ == '__main__':
     hub = pathlib.Path(root).parent
 
     # source
-    path = os.path.join(hub, 'spatial', 'warehouse', 'features', 'elevation', '*.csv')
+    path = os.path.join(hub, 'spatial', 'warehouse', 'features', 'data', '*.csv')
 
     # storage
     storage = os.path.join(root, 'warehouse', 'explore')
