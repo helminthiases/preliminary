@@ -12,7 +12,8 @@ def main():
 
     logger.info('main')
     subprocess.run('python src/missing/interface.py', shell=True)
-    subprocess.run('python src/missing/interface.py', shell=True)
+    subprocess.run('python src/explore/interface.py', shell=True)
+    subprocess.run('python src/cases/interface.py', shell=True)
 
 
 if __name__ == '__main__':
