@@ -22,7 +22,7 @@ def main():
     # the year fields
     frame = src.missing.features.Features(storage=os.path.join(storage, 'disaggregates'), source=source).exc()
 
-    # Inventory of <disaggregates> files
+    # Inventory of the above <disaggregates> files
     files = glob.glob(pathname=os.path.join(storage, 'disaggregates', '*.csv'))
     elements = [file.split('preliminary', 1)[1] for file in files]
     elements = [element.replace('\\', '/') for element in elements]
