@@ -42,8 +42,8 @@ runs all the steps the table below outlines.
     </tr>
     <tr>
         <td><ul><li><a href=".src/explore/interface.py">src/explore/interface.py</a></li></ul></td>
-        <td>The program creates data tables for interactive exploratory analysis via <a href="https://helminthiases.github.io/exploration" target="_blank">Tableau Public</a></td>
-        <td><a href="./warehouse/explore">explore</a><br><br></td>
+        <td>The program creates data tables for interactive exploratory analysis via <a href="https://helminthiases.github.io/exploration" target="_blank">Tableau Public</a><br><br></td>
+        <td><a href="./warehouse/explore">explore</a></td>
     </tr>
 </table>
 
