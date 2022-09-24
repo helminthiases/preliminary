@@ -19,7 +19,7 @@ def main():
 
     # This function determines the missing state of each value of the fields of interest.  In general, the
     # fields in question are the geographic coordinates fields, the geohelminth prevalence fields, and
-    # the year fields
+    # the year field.
     frame = src.missing.features.Features(storage=os.path.join(storage, 'disaggregates'), source=source).exc()
 
     # Inventory of the above <disaggregates> files
@@ -36,8 +36,7 @@ def main():
     src.missing.spatiotemporal.SpatioTemporal(
         storage=os.path.join(storage, 'aggregates')).exc(data=frame)
 
-    # Null Regression
-    # Focusing on the countries with the smallest number of missing data cells
+    # Null Regression: Focusing on the countries with the smallest number of missing data cells.
     paths = [os.path.join(source, f'{name}.csv')
              for name in ['NG', 'TG', 'LR', 'CD', 'UG', 'KE', 'CI', 'ZM', 'MW', 'TZ', 'MG', 'SZ', 'ML', 'ER']]
     estimates = src.missing.regression.estimates.Estimates(paths=paths).exc()
